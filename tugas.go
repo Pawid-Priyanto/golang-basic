@@ -2,147 +2,93 @@ package main
 
 import (
 	"fmt"
-	"math"
-	"strconv"
+	"time"
 )
 
 func main() {
 
-	fmt.Println("Welcome to Go calculator!")
-	perintah := readLine("masukan perintah: \n 1. tambah \n 2. kurang \n 3. bagi \n 4. kali \n 5. akar \n 6. pangkat \n 8. luas persegi \n 9. luas lingkaran \n 10. volume tabung \n 11. volume balok \n 12. volume prisma")
-	fmt.Println(perintah)
+	// Inisiasi dari tahun bulan dan tanggal
+	tahun := 2020
+	bulan := []string{"Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"}
+	hari := []int{31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}
+	var haripertama int
+	hariawalbulan := [12]int{}
+	valKosong := "-- "
 
-	if perintah == "1" {
-		num1, num2 := getNumbers()
-		result := num1 + num2
-		fmt.Println("hasil penambahan = ", result)
-	} else if perintah == "2" {
-		num1, num2 := getNumbers()
-		result := num1 - num2
-		fmt.Println("hasil pengurangan = ", result)
-	} else if perintah == "3" {
-		num1, num2 := getNumbers()
-		result := num1 / num2
-		fmt.Println("hasil pembagian = ", result)
-	} else if perintah == "4" {
-		num1, num2 := getNumbers()
-		result := num1 * num2
-		fmt.Println("hasil perkalian =", result)
-	} else if perintah == "5" {
-		fmt.Println("\n==== akar ====")
-		num1, num2 := getNumbers()
-
-		helper := helper{float64(num1), float64(num2)}
-		helper.Akar()
-	} else if perintah == "6" {
-		fmt.Println("\n==== pangkat ====")
-		num1, num2 := getNumbers()
-
-		helper := helper{float64(num1), float64(num2)}
-		helper.Kuadrat()
-	} else if perintah == "7" {
-		fmt.Println("opps.. its a trap !!")
-	} else if perintah == "8" {
-		Luas_Persegi()
-	} else if perintah == "9" {
-		Luas_Lingkaran()
-	} else if perintah == "10" {
-		Volume_Tabung()
-	} else if perintah == "11" {
-		Volume_Balok()
-	} else if perintah == "12" {
-		Volume_Prisma()
-	} else {
-		fmt.Println("Invalid input")
+	// pada tahun kabisat
+	if (tahun%4 == 0 && tahun%100 != 0) || tahun%400 == 0 {
+		hari[1] = 29
 	}
 
-	readLine("press 'anything' to exit")
-}
+	// untuk mendapatkan hari pertama setiap bulan
+	for i := 0; i < 12; i++ {
+		hari1 := time.Date(tahun, time.Month(i+1), 1, 1, 1, 1, 1, time.UTC)
 
-// fungsi untuk membaca inputan
-func readLine(teks string) string {
-	fmt.Println(teks)
-	var input string
-	fmt.Scanln(&input)
-	return input
-}
+		switch hari1.Weekday() {
+		case 1:
+			haripertama = 1
+		case 2:
+			haripertama = 2
+		case 3:
+			haripertama = 3
+		case 4:
+			haripertama = 4
+		case 5:
+			haripertama = 5
+		case 6:
+			haripertama = 6
+		case 7:
+			haripertama = 7
 
-// fungsi untuk mengconvert string ke
-func getNumbers() (int, int) {
-	StringNum1 := readLine("angka pertama: ")
-	num1, _ := strconv.Atoi(StringNum1)
-	StringNum2 := readLine("angka kedua: ")
-	num2, _ := strconv.Atoi(StringNum2)
-	return num1, num2
-}
+		}
+		hariawalbulan[i] = haripertama
+	}
 
-func Luas_Persegi() {
-	var sisi float64
+	fmt.Println("Welcome to KALENDER", tahun)
+	for m := 0; m < 12; m++ {
 
-	fmt.Printf("Masukkan Panjang Sisi = ")
-	fmt.Scanf("%f", &sisi)
-	fmt.Println("Hasil =", sisi*sisi)
-}
+		// Print awal pada bulan
+		fmt.Print("======" + bulan[m])
+		spasi := 14 - len(bulan[m])
+		for aa := 0; aa < spasi; aa++ {
+			fmt.Print("=")
+		}
+		fmt.Println("")
+		fmt.Println("S  S  R  K  J  S  M ")
 
-func Luas_Lingkaran() {
-	var jari float64
+		// 	mencari start di hari apa
+		if hariawalbulan[m] > 0 {
+			for ii := 1; ii < hariawalbulan[m]; ii++ {
+				fmt.Print(valKosong)
+			}
+		}
 
-	fmt.Printf("Masukkan Panjang jari = ")
-	fmt.Scanf("%f", &jari)
-	fmt.Println("Hasil =", 3.14*jari*jari)
-}
+		// melooping tanggal
+		for a, b := 1, hariawalbulan[m]; a <= hari[m]; a, b = a+1, b+1 {
+			if a < 10 {
+				fmt.Print(a, "  ")
+			} else {
+				fmt.Print(a, " ")
+			}
 
-func Volume_Tabung() {
-	var jari float64
-	var tinggi float64
+			// untuk ganti baris jika sudah hari ke8
+			if b%7 == 0 {
+				fmt.Print("\n")
+			}
+		}
+		// mencari sisa hari
+		if hariawalbulan[m]+hari[m] <= 35 {
+			sisa := 35 - (hariawalbulan[m] + hari[m])
+			for j := 0; j <= sisa; j++ {
+				fmt.Print(valKosong)
+			}
+		} else if hariawalbulan[m]+hari[m] > 36 {
+			sisa := 42 - (hariawalbulan[m] + hari[m])
+			for j := 0; j <= sisa; j++ {
+				fmt.Print(valKosong)
+			}
 
-	fmt.Printf("Masukkan Panjang jari = ")
-	fmt.Scanf("%f", &jari)
-	fmt.Printf("Masukkan Tinggi = ")
-
-	fmt.Scanf("%f", &tinggi)
-	fmt.Println("Hasil =", 3.14*jari*jari*tinggi)
-}
-
-func Volume_Balok() {
-	var panjang float64
-	var lebar float64
-	var tinggi float64
-
-	fmt.Printf("Masukkan Panjang = ")
-	fmt.Scanf("%f", &panjang)
-	fmt.Printf("Masukkan Lebar = ")
-	fmt.Scanf("%f", &lebar)
-	fmt.Printf("Masukkan Tinggi = ")
-	fmt.Scanf("%f", &tinggi)
-	fmt.Println("Hasil =", panjang*lebar*tinggi)
-}
-
-func Volume_Prisma() {
-	var a float64
-	var b float64
-	var tinggi float64
-
-	fmt.Printf("Masukkan sisi a = ")
-	fmt.Scanf("%f", &a)
-	fmt.Printf("Masukkan sisi b = ")
-	fmt.Scanf("%f", &b)
-	fmt.Printf("Masukkan Tinggi = ")
-	fmt.Scanf("%f", &tinggi)
-	fmt.Println("Hasil =", 0.5*a*b*tinggi)
-}
-
-type helper struct {
-	Angka1 float64
-	Angka2 float64
-}
-
-func (h helper) Akar() {
-	fmt.Println("Akar angka 1:", math.Sqrt(h.Angka1))
-
-}
-
-func (h helper) Kuadrat() {
-	fmt.Println("Kuadrat angka 1:", h.Angka1*h.Angka1)
-
+		}
+		fmt.Println("")
+	}
 }
