@@ -3,92 +3,117 @@ package main
 import (
 	"fmt"
 	"time"
+
+	// for generate id
+	"github.com/rs/xid"
 )
+
+func generateIdParkir() (string, time.Time, string, string) {
+	id := xid.New().String()
+	time := time.Now()
+	var (
+		tipe, plat string
+	)
+	fmt.Print("Tipe : ")
+	fmt.Scanf("%s", &tipe)
+	fmt.Print("Plat Nomor : ")
+	fmt.Scanf("%s", &plat)
+
+	return id, time, tipe, plat
+}
+
+type Karcis struct {
+	id   string
+	plat string
+	time time.Time
+	tipe string
+}
+
+// fungsi untuk membaca inputan
+func readLine(teks string) string {
+	fmt.Println(teks)
+	var input string
+	fmt.Scanln(&input)
+	return input
+}
+
+func ParkirMasuk() {
+
+	var kendaraan []Karcis
+	id, time, tipe, plat := generateIdParkir()
+	data := Karcis{id, plat, time, tipe}
+
+	kendaraan = append(kendaraan, data)
+	for i := 0; i < len(kendaraan); i++ {
+		fmt.Print("========================== \n")
+		fmt.Println("ID Parkir :", kendaraan[i].id)
+		fmt.Println("Lama Parkir :", kendaraan[i].time.Second(), "Detik")
+		fmt.Println("Nomor Plat Parkir :", kendaraan[i].plat)
+		fmt.Println("Jenis Kendaraan :", kendaraan[i].tipe)
+		fmt.Print("========================== \n")
+	}
+}
+
+func ParkirKeluar() {
+	var kendaraan []Karcis
+	var (
+		idBaru        string
+		platNomor     string
+		tipeKendaraan string
+	)
+	now := time.Now()
+	fmt.Print("========================== \n")
+	fmt.Print("Tipe Kendaraan : ")
+	fmt.Scan(&tipeKendaraan)
+	fmt.Print("Plat Nomor : ")
+	fmt.Scan(&platNomor)
+	fmt.Print("ID Parkir : ")
+	fmt.Scan(&idBaru)
+	fmt.Print("========================== \n")
+
+	for i := 0; i < len(kendaraan); i++ {
+		if idBaru == kendaraan[i].id && tipeKendaraan == kendaraan[i].tipe && platNomor == kendaraan[i].plat {
+			waktu := now.Sub(kendaraan[i].time).Seconds()
+			fmt.Println(waktu)
+			if kendaraan[i].tipe == "Motor" {
+				if waktu > 1 {
+					fmt.Print("Bayar parkir sebanyak : ")
+					fmt.Println("Rp.", int((waktu-1)*3000+5000))
+				} else {
+					fmt.Print("Bayar parkir sebanyak")
+					fmt.Println("Rp.", 5000)
+				}
+			} else if kendaraan[i].tipe == "Mobil" {
+				if waktu > 1 {
+					fmt.Print("Bayar parkir sebanyak : ")
+					fmt.Println("Rp.", int((waktu-1)*2000+3000))
+				} else {
+					fmt.Print("Bayar parkir sebanyak")
+					fmt.Println("Rp.", 3000)
+				}
+			}
+			kendaraan = append(kendaraan[:i], kendaraan[i+1:]...)
+		}
+
+	}
+
+}
 
 func main() {
 
-	// Inisiasi dari tahun bulan dan tanggal
-	tahun := 2020
-	bulan := []string{"Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"}
-	hari := []int{31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}
-	var haripertama int
-	hariawalbulan := [12]int{}
-	valKosong := "-- "
-
-	// pada tahun kabisat
-	if (tahun%4 == 0 && tahun%100 != 0) || tahun%400 == 0 {
-		hari[1] = 29
+	menu := 0
+	for menu != 99 {
+		fmt.Println("Welcome to Aplikasi Parkir")
+		pilihan := readLine(" \n 1. Parkir Masuk \n 2. Parkir Keluar \n 99. Keluar")
+		fmt.Println("Pilhan menu: ")
+		fmt.Println(pilihan)
+		if pilihan == "1" {
+			ParkirMasuk()
+		} else if pilihan == "2" {
+			ParkirKeluar()
+		} else {
+			fmt.Println("wrong type")
+		}
 	}
 
-	// untuk mendapatkan hari pertama setiap bulan
-	for i := 0; i < 12; i++ {
-		hari1 := time.Date(tahun, time.Month(i+1), 1, 1, 1, 1, 1, time.UTC)
-
-		switch hari1.Weekday() {
-		case 1:
-			haripertama = 1
-		case 2:
-			haripertama = 2
-		case 3:
-			haripertama = 3
-		case 4:
-			haripertama = 4
-		case 5:
-			haripertama = 5
-		case 6:
-			haripertama = 6
-		case 7:
-			haripertama = 7
-
-		}
-		hariawalbulan[i] = haripertama
-	}
-
-	fmt.Println("Welcome to KALENDER", tahun)
-	for m := 0; m < 12; m++ {
-
-		// Print awal pada bulan
-		fmt.Print("======" + bulan[m])
-		spasi := 14 - len(bulan[m])
-		for aa := 0; aa < spasi; aa++ {
-			fmt.Print("=")
-		}
-		fmt.Println("")
-		fmt.Println("S  S  R  K  J  S  M ")
-
-		// 	mencari start di hari apa
-		if hariawalbulan[m] > 0 {
-			for ii := 1; ii < hariawalbulan[m]; ii++ {
-				fmt.Print(valKosong)
-			}
-		}
-
-		// melooping tanggal
-		for a, b := 1, hariawalbulan[m]; a <= hari[m]; a, b = a+1, b+1 {
-			if a < 10 {
-				fmt.Print(a, "  ")
-			} else {
-				fmt.Print(a, " ")
-			}
-
-			// untuk ganti baris jika sudah hari ke8
-			if b%7 == 0 {
-				fmt.Print("\n")
-			}
-		}
-		// mencari sisa hari
-		if hariawalbulan[m]+hari[m] <= 35 {
-			sisa := 35 - (hariawalbulan[m] + hari[m])
-			for j := 0; j <= sisa; j++ {
-				fmt.Print(valKosong)
-			}
-		} else if hariawalbulan[m]+hari[m] > 36 {
-			sisa := 42 - (hariawalbulan[m] + hari[m])
-			for j := 0; j <= sisa; j++ {
-				fmt.Print(valKosong)
-			}
-
-		}
-		fmt.Println("")
-	}
 }
