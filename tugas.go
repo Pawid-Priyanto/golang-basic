@@ -73,7 +73,7 @@ func ParkirKeluar() {
 
 	for i := 0; i < len(kendaraan); i++ {
 		if idBaru == kendaraan[i].id && tipeKendaraan == kendaraan[i].tipe && platNomor == kendaraan[i].plat {
-			waktu := now.Sub(kendaraan[i].time).Seconds()
+			waktu := now.Sub(kendaraan[i].time)
 			fmt.Println(waktu)
 			if kendaraan[i].tipe == "Motor" {
 				if waktu > 1 {
