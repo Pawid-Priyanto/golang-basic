@@ -19,12 +19,12 @@ func generateIdParkir() (string, time.Time) {
 
 	return id, time
 }
+
 func main() {
 	var kendaraan []TiketMasuk
-	menu := false
 	input := 0
 
-	for !menu {
+	for input != 3 {
 		fmt.Println("Welcome to Aplikasi Parkir")
 		fmt.Println("1. Parkir Masuk ")
 		fmt.Println("2. Parkir Keluar")
@@ -55,7 +55,7 @@ func main() {
 			)
 			now := time.Now()
 			fmt.Print("========================== \n")
-			fmt.Print("Tipe Kendaraan : ")
+			fmt.Print("Tipe Kendaraan (HURUF CAPITAL): ")
 			fmt.Scan(&tipeKendaraan)
 			fmt.Print("Plat Nomor : ")
 			fmt.Scan(&platNomor)
@@ -66,7 +66,7 @@ func main() {
 				if idBaru == kendaraan[i].id {
 					waktu := int(now.Sub(kendaraan[i].time).Seconds())
 					fmt.Println("Lama parkir anda :", waktu, "Detik")
-					if tipeKendaraan == "Mobil" {
+					if tipeKendaraan == "MOBIL" {
 						if waktu > 1 {
 							fmt.Print("Total Biaya Parkir : ")
 							fmt.Println("Rp.", int((waktu-1)*3000+5000))
@@ -76,7 +76,7 @@ func main() {
 							fmt.Println("Rp.", 5000)
 							fmt.Print("========================== \n")
 						}
-					} else if tipeKendaraan == "Motor" {
+					} else if tipeKendaraan == "MOTOR" {
 						if waktu > 1 {
 							fmt.Print("Total Biaya Parkir : ")
 							fmt.Println("Rp.", int((waktu-1)*2000+3000))
@@ -86,8 +86,9 @@ func main() {
 							fmt.Println("Rp.", 3000)
 							fmt.Print("========================== \n")
 						}
+					} else {
+						fmt.Println("Kendaraan yg anda masukan salah")
 					}
-					kendaraan = append(kendaraan[:i], kendaraan[i+1:]...)
 				} else {
 					fmt.Println("Id yg anda masukan salah")
 				}
@@ -95,7 +96,6 @@ func main() {
 
 			break
 		case 3:
-			menu = true
 			fmt.Println("Terimakasih")
 			break
 		default:
